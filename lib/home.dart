@@ -21,6 +21,10 @@ class _HomeState extends State<Home> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              child: Text("Text to Binary Converter", textAlign: TextAlign.center, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),),
+            ),
             CupertinoTextField(
               maxLines: 5,
               minLines: 5,
