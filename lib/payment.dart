@@ -9,18 +9,12 @@ class Payment extends StatefulWidget {
   @override
   _PaymentState createState() => _PaymentState();
 }
-
-const String _kConsumableId = 'consumable';
-const String _kUpgradeId = 'upgrade';
-const String _kSilverSubscriptionId = 'android.test.purchased';
-const String _kGoldSubscriptionId = 'android.test.canceled';
 const List<String> _kProductIds = <String>[
-  _kConsumableId,
-  _kUpgradeId,
-  _kGoldSubscriptionId,
-  _kSilverSubscriptionId,
-  "android.test.refunded",
-  "android.test.item_unavailable"
+  "one_week",
+  "one_month",
+  "three_month",
+  "six_month",
+  "one_year"
 ];
 
 class _PaymentState extends State<Payment> {
