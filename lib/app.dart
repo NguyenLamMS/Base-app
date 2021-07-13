@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:payment/home.dart';
 import 'package:payment/payment.dart';
 
 class App extends StatelessWidget {
@@ -6,7 +7,7 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Payment(),
+      child: Home(),
     );
   }
 }
