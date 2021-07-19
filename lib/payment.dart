@@ -111,7 +111,7 @@ class _PaymentState extends State<Payment> {
                             productDetails: productDetails,
                             applicationUserName: null,
                           );
-                          _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: true);
+                          _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: false);
                         },
                       )),
           ),
