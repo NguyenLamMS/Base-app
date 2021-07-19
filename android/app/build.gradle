@@ -37,7 +37,7 @@ android {
         applicationId "com.dev.phonecode"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode 4
+        versionCode 5
         versionName flutterVersionName
     }
 
