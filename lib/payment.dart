@@ -111,8 +111,11 @@ class _PaymentState extends State<Payment> {
                             productDetails: productDetails,
                             applicationUserName: null,
                           );
-                          print(productDetails.id);
-                          _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: false);
+                          if(productDetails.id.contains("donate")){
+                            _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: false);
+                          }else{
+                            _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
+                          }
                         },
                       )),
           ),
