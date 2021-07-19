@@ -9,18 +9,17 @@ class Payment extends StatefulWidget {
   @override
   _PaymentState createState() => _PaymentState();
 }
-
-const String _kConsumableId = 'consumable';
-const String _kUpgradeId = 'upgrade';
-const String _kSilverSubscriptionId = 'android.test.purchased';
-const String _kGoldSubscriptionId = 'android.test.canceled';
 const List<String> _kProductIds = <String>[
-  _kConsumableId,
-  _kUpgradeId,
-  _kGoldSubscriptionId,
-  _kSilverSubscriptionId,
-  "android.test.refunded",
-  "android.test.item_unavailable"
+  "one_week",
+  "one_month",
+  "three_month",
+  "six_month",
+  "one_year",
+  "donate_1",
+  "donate_2",
+  "donate_3",
+  "donate_4",
+  "donate_5",
 ];
 
 class _PaymentState extends State<Payment> {
@@ -63,7 +62,7 @@ class _PaymentState extends State<Payment> {
       return Card(child: (ListTile(leading: CircularProgressIndicator(), title: Text('Fetching products...'))));
     }
     if (!_isAvailable) {
-      return Card();
+      return Card(child: Container(padding: EdgeInsets.all(16),alignment: Alignment.center,child: Text("Play store not available", style: TextStyle(fontWeight: FontWeight.w600, color: Colors.deepOrange),)));
     }
     List<Widget> productList = <Widget>[];
     productList.add(Card(
@@ -112,7 +111,7 @@ class _PaymentState extends State<Payment> {
                             productDetails: productDetails,
                             applicationUserName: null,
                           );
-                          _inAppPurchase.buyConsumable(purchaseParam: purchaseParam);
+                          _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: true);
                         },
                       )),
           ),
