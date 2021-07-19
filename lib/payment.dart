@@ -1,7 +1,12 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_android/billing_client_wrappers.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart';
+
 
 class Payment extends StatefulWidget {
   const Payment({Key? key}) : super(key: key);
@@ -112,7 +117,7 @@ class _PaymentState extends State<Payment> {
                             applicationUserName: null,
                           );
                           if(productDetails.id.contains("donate")){
-                            _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: false);
+                            _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: true);
                           }else{
                             _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
                           }
