@@ -14,7 +14,12 @@ const List<String> _kProductIds = <String>[
   "one_month",
   "three_month",
   "six_month",
-  "one_year"
+  "one_year",
+  "donate_1",
+  "donate_2",
+  "donate_3",
+  "donate_4",
+  "donate_5",
 ];
 
 class _PaymentState extends State<Payment> {
@@ -57,7 +62,7 @@ class _PaymentState extends State<Payment> {
       return Card(child: (ListTile(leading: CircularProgressIndicator(), title: Text('Fetching products...'))));
     }
     if (!_isAvailable) {
-      return Card();
+      return Card(child: Container(padding: EdgeInsets.all(16),alignment: Alignment.center,child: Text("Play store not available", style: TextStyle(fontWeight: FontWeight.w600, color: Colors.deepOrange),)));
     }
     List<Widget> productList = <Widget>[];
     productList.add(Card(
