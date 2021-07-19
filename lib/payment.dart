@@ -14,7 +14,12 @@ const List<String> _kProductIds = <String>[
   "one_month",
   "three_month",
   "six_month",
-  "one_year"
+  "one_year",
+  "donate_1",
+  "donate_2",
+  "donate_3",
+  "donate_4",
+  "donate_5",
 ];
 
 class _PaymentState extends State<Payment> {
