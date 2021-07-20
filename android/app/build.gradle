@@ -37,7 +37,7 @@ android {
         applicationId "com.convert.texttobase64"
         minSdkVersion 16
         targetSdkVersion 30
-        versionCode flutterVersionCode.toInteger()
+        versionCode 2
         versionName flutterVersionName
     }
 
