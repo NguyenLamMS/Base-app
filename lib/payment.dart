@@ -9,6 +9,7 @@ class Payment extends StatefulWidget {
   @override
   _PaymentState createState() => _PaymentState();
 }
+
 const List<String> _kProductIds = <String>[
   "one_week",
   "one_month",
@@ -33,7 +34,8 @@ class _PaymentState extends State<Payment> {
 
   @override
   void initState() {
-    final Stream<List<PurchaseDetails>> purchaseUpdated = _inAppPurchase.purchaseStream;
+    final Stream<List<PurchaseDetails>> purchaseUpdated =
+        _inAppPurchase.purchaseStream;
     _subscription = purchaseUpdated.listen((purchaseDetailsList) {
       _listenToPurchaseUpdated(purchaseDetailsList);
     }, onDone: () {
@@ -59,10 +61,21 @@ class _PaymentState extends State<Payment> {
 
   Widget _buildProductList() {
     if (_loading) {
-      return Card(child: (ListTile(leading: CircularProgressIndicator(), title: Text('Fetching products...'))));
+      return Card(
+          child: (ListTile(
+              leading: CircularProgressIndicator(),
+              title: Text('Fetching products...'))));
     }
     if (!_isAvailable) {
-      return Card(child: Container(padding: EdgeInsets.all(16),alignment: Alignment.center,child: Text("Play store not available", style: TextStyle(fontWeight: FontWeight.w600, color: Colors.deepOrange),)));
+      return Card(
+          child: Container(
+              padding: EdgeInsets.all(16),
+              alignment: Alignment.center,
+              child: Text(
+                "Play store not available",
+                style: TextStyle(
+                    fontWeight: FontWeight.w600, color: Colors.deepOrange),
+              )));
     }
     List<Widget> productList = <Widget>[];
     productList.add(Card(
@@ -72,13 +85,15 @@ class _PaymentState extends State<Payment> {
           padding: EdgeInsets.all(8),
           child: Text(
             'You can donate to me so that i can have funds to develop other apps.',
-            style: TextStyle(color: Theme.of(context).primaryColor, fontSize: 18),
+            style:
+                TextStyle(color: Theme.of(context).primaryColor, fontSize: 18),
             textAlign: TextAlign.center,
           ),
         ),
       ),
     ));
-    Map<String, PurchaseDetails> purchases = Map.fromEntries(_purchases.map((PurchaseDetails purchase) {
+    Map<String, PurchaseDetails> purchases =
+        Map.fromEntries(_purchases.map((PurchaseDetails purchase) {
       if (purchase.pendingCompletePurchase) {
         _inAppPurchase.completePurchase(purchase);
       }
@@ -111,10 +126,13 @@ class _PaymentState extends State<Payment> {
                             productDetails: productDetails,
                             applicationUserName: null,
                           );
-                          if(productDetails.id.contains("donate")){
-                            _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: true);
-                          }else{
-                            _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
+                          if (productDetails.id.contains("donate")) {
+                            _inAppPurchase.buyConsumable(
+                                purchaseParam: purchaseParam,
+                                autoConsume: true);
+                          } else {
+                            _inAppPurchase.buyNonConsumable(
+                                purchaseParam: purchaseParam);
                           }
                         },
                       )),
@@ -157,7 +175,8 @@ class _PaymentState extends State<Payment> {
       return;
     }
 
-    ProductDetailsResponse productDetailResponse = await _inAppPurchase.queryProductDetails(_kProductIds.toSet());
+    ProductDetailsResponse productDetailResponse =
+        await _inAppPurchase.queryProductDetails(_kProductIds.toSet());
     if (productDetailResponse.error != null) {
       setState(() {
         _isAvailable = isAvailable;
