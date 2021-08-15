@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:payment/payment.dart';
 
 class RandomPassword extends StatefulWidget {
   const RandomPassword({Key? key}) : super(key: key);
@@ -99,9 +100,16 @@ class _RandomPasswordState extends State<RandomPassword> {
                         ),
                       ],
                     ),
-                    CupertinoButton(child: Text("Get Password", style: TextStyle(color: Colors.black),), onPressed: (){
-                      regPassword();
-                    }, color: Colors.white,)
+                    Column(
+                      children: [
+                        CupertinoButton(child: Text("Get Password", style: TextStyle(color: Colors.black),), onPressed: (){
+                          regPassword();
+                        }, color: Colors.white,),
+                        TextButton(onPressed: (){
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => Payment()));
+                        }, child: Text("Donate"))
+                      ],
+                    )
                   ],
                 )),
               ],
