@@ -1,10 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.random.allpassword">
+    package="com.random.allperson">
    <application
-        android:label="Random Password"
+        android:label="Random Person Generator"
         android:icon="@mipmap/ic_launcher">
         <activity
-            android:name="com.random.allpassword.MainActivity"
+            android:name="com.random.allperson.MainActivity"
             android:launchMode="singleTop"
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
