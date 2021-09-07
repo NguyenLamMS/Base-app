@@ -16,8 +16,8 @@ class Home extends StatelessWidget {
           Container(height: 50,decoration: BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.pink,
-                Colors.deepPurple
+                Color(0xff614385),
+                Color(0xff516395),
               ],
             )
           ) ,child: HomeAppBar(context)),
@@ -32,7 +32,7 @@ class Home extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Text("Cute Emoticons Symbols", style: TextStyle(fontWeight: FontWeight.w300, fontSize: 18, color: Colors.white),),
+          child: Text("Emojis", style: TextStyle(fontWeight: FontWeight.w500, fontSize: 18, color: Colors.white),),
         ),
         TextButton(onPressed: (){
           Navigator.of(context).push(MaterialPageRoute(builder: (context) => Payment()));
@@ -46,23 +46,11 @@ class Home extends StatelessWidget {
       builder: (context, snap){
         if(snap.hasData){
             var arrayData = snap.data;
-            return GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),itemCount: arrayData!.length, itemBuilder: (context, index){
-              return Card(
-                child: Stack(
-                  children: [
-                    Positioned.fill(
-                      child: Container(
-                        alignment: Alignment.center,
-                        child: FittedBox(fit: BoxFit.contain ,child: Text(arrayData[index], style: Theme.of(context).textTheme.headline6,)),
-                      ),
-                    ),
-                    Positioned(bottom: 0, right: 0, left: 0 ,child: TextButton(onPressed: (){
-                      Clipboard.setData(ClipboardData(text: arrayData[index]));
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Copy Success"), duration: Duration(milliseconds: 100),));
-                    }, child: Text('Copy')))
-                  ],
-                ),
-              );
+            return GridView.builder(gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 5),itemCount: arrayData!.length, itemBuilder: (context, index){
+              return TextButton(onPressed: (){
+                Clipboard.setData(ClipboardData(text: arrayData[index]));
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Copy Success"), duration: Duration(milliseconds: 100),));
+              }, child: Text(arrayData[index], style: Theme.of(context).textTheme.headline5,));
             });
         }else{
           return Center(child: CircularProgressIndicator(),);
