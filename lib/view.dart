@@ -1,72 +1,105 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:payment/home.dart';
+import 'package:payment/payment.dart';
 
 class View extends StatefulWidget {
-  const View({Key? key}) : super(key: key);
-
+  const View({Key? key, this.index = 0, this.color = Colors.red, this.contents = ""}) : super(key: key);
+  final String contents;
+  final int index;
+  final Color color;
   @override
   _ViewState createState() => _ViewState();
 }
 
 class _ViewState extends State<View>{
   @override
+  void initState() {
+  // to hide both:
+    SystemChrome.setEnabledSystemUIMode (SystemUiMode.manual, overlays: []);
+    super.initState();
+  }
+  @override
+  void dispose() {
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: SystemUiOverlay.values);
+    super.dispose();
+  }
+  @override
   Widget build(BuildContext context) {
+    List<String> arrayContent = widget.contents.split('\n');
     return Scaffold(
       body: SafeArea(
         child: Container(
+          padding: EdgeInsets.all(8),
           alignment: Alignment.center,
           width: double.infinity,
           height: double.infinity,
-          color: Colors.yellow,
+          color: widget.color,
           child: RotatedBox(
             quarterTurns: 1,
-            child: Rotate(),
+            child: SizedBox.expand(child: FittedBox(fit: BoxFit.contain ,child: ViewStyle(widget.index, arrayContent))),
           ),
         ),
       ),
     );
   }
-
-
-  Widget Rotate(){
+  Widget ViewStyle(index,List<String>  content){
+    switch(index){
+      case 0:
+        return Rotate(content);
+      case 1:
+        return Fade(content);
+      case 2:
+        return Typer(content);
+      case 3:
+        return Typewriter(content);
+      case 4:
+        return Scale(content);
+      case 5:
+        return Colorize(content);
+      case 6:
+        return Wavy(content);
+      case 7:
+        return Flicker(content);
+      default:
+        return Rotate(content);
+    }
+  }
+  Widget Rotate(List<String> content){
+    var firt = content.first;
+    content.removeAt(0);
     return Row(
-        mainAxisSize: MainAxisSize.min,
+        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
           const SizedBox(width: 20.0, height: 100.0),
-          const Text(
-            'Be',
-            style: TextStyle(fontSize: 43.0),
+          Text(
+            firt,
+            style: TextStyle(fontSize: 100.0, fontWeight: FontWeight.w600),
+            overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(width: 20.0, height: 100.0),
-          DefaultTextStyle(
+          content.length == 0 ? SizedBox.shrink() : DefaultTextStyle(
             style: const TextStyle(
-              fontSize: 40.0,
+              fontSize: 100.0,
               fontFamily: 'Horizon',
             ),
             child: AnimatedTextKit(
-              animatedTexts: [
-                RotateAnimatedText('AWESOME'),
-                RotateAnimatedText('OPTIMISTIC'),
-                RotateAnimatedText('DIFFERENT'),
-              ],
+              animatedTexts: content.map((e) => RotateAnimatedText(e)).toList(),
             ),
           ),
         ],
       );
   }
-  Widget Fade(){
+  Widget Fade(List<String> content){
     return SizedBox(
       child: DefaultTextStyle(
         style: const TextStyle(
-          fontSize: 32.0,
+          fontSize: 100.0,
           fontWeight: FontWeight.bold,
         ),
         child: AnimatedTextKit(
-          animatedTexts: [
-            FadeAnimatedText('do IT!'),
-            FadeAnimatedText('do it RIGHT!!'),
-            FadeAnimatedText('do it RIGHT NOW!!!'),
-          ],
+          animatedTexts: content.map((e) => FadeAnimatedText(e)).toList(),
           onTap: () {
             print("Tap Event");
           },
@@ -75,20 +108,15 @@ class _ViewState extends State<View>{
     );
   }
 
-  Widget Typer(){
+  Widget Typer(List<String> content){
     return SizedBox(
       child: DefaultTextStyle(
         style: const TextStyle(
-          fontSize: 30.0,
+          fontSize: 100.0,
           fontFamily: 'Bobbers',
         ),
         child: AnimatedTextKit(
-          animatedTexts: [
-            TyperAnimatedText('It is not enough to do your best,'),
-            TyperAnimatedText('you must know what to do,'),
-            TyperAnimatedText('and then do your best'),
-            TyperAnimatedText('- W.Edwards Deming'),
-          ],
+          animatedTexts: content.map((e) => TyperAnimatedText(e)).toList(),
           onTap: () {
             print("Tap Event");
           },
@@ -96,20 +124,15 @@ class _ViewState extends State<View>{
       ),
     );
   }
-  Widget Typewriter(){
+  Widget Typewriter(List<String> content){
     return SizedBox(
       child: DefaultTextStyle(
         style: const TextStyle(
-          fontSize: 30.0,
+          fontSize: 100.0,
           fontFamily: 'Agne',
         ),
         child: AnimatedTextKit(
-          animatedTexts: [
-            TypewriterAnimatedText('Discipline is the best tool'),
-            TypewriterAnimatedText('Design first, then code'),
-            TypewriterAnimatedText('Do not patch bugs out, rewrite them'),
-            TypewriterAnimatedText('Do not test bugs out, design them out Do not test bugs out, design them out Do not test bugs out, design them out Do not test bugs out, design them out'),
-          ],
+          animatedTexts: content.map((e) => TypewriterAnimatedText(e)).toList(),
           onTap: () {
             print("Tap Event");
           },
@@ -118,19 +141,15 @@ class _ViewState extends State<View>{
     );
   }
 
-  Widget Scale(){
+  Widget Scale(List<String> content){
     return SizedBox(
       child: DefaultTextStyle(
         style: const TextStyle(
-          fontSize: 70.0,
+          fontSize: 100.0,
           fontFamily: 'Canterbury',
         ),
         child: AnimatedTextKit(
-          animatedTexts: [
-            ScaleAnimatedText('Think'),
-            ScaleAnimatedText('Build'),
-            ScaleAnimatedText('Ship'),
-          ],
+          animatedTexts: content.map((e) => ScaleAnimatedText(e)).toList(),
           onTap: () {
             print("Tap Event");
           },
@@ -138,7 +157,7 @@ class _ViewState extends State<View>{
       ),
     );
   }
-  Widget Colorize(){
+  Widget Colorize(List<String> content){
     const colorizeColors = [
       Colors.purple,
       Colors.blue,
@@ -147,29 +166,17 @@ class _ViewState extends State<View>{
     ];
 
     const colorizeTextStyle = TextStyle(
-      fontSize: 50.0,
+      fontSize: 100.0,
       fontFamily: 'Horizon',
     );
 
     return SizedBox(
       child: AnimatedTextKit(
-        animatedTexts: [
-          ColorizeAnimatedText(
-            'Larry Page',
-            textStyle: colorizeTextStyle,
-            colors: colorizeColors,
-          ),
-          ColorizeAnimatedText(
-            'Bill Gates',
-            textStyle: colorizeTextStyle,
-            colors: colorizeColors,
-          ),
-          ColorizeAnimatedText(
-            'Steve Jobs',
-            textStyle: colorizeTextStyle,
-            colors: colorizeColors,
-          ),
-        ],
+        animatedTexts: content.map((e) =>  ColorizeAnimatedText(
+          e,
+          textStyle: colorizeTextStyle,
+          colors: colorizeColors,
+        )).toList(),
         isRepeatingAnimation: true,
         onTap: () {
           print("Tap Event");
@@ -177,30 +184,13 @@ class _ViewState extends State<View>{
       ),
     );
   }
-  Widget TextLiquid(){
-    return SizedBox(
-    child: TextLiquidFill(
-      text: 'LIQUIDY',
-      waveColor: Colors.blueAccent,
-      boxBackgroundColor: Colors.redAccent,
-      textStyle: TextStyle(
-        fontSize: 80.0,
-        fontWeight: FontWeight.bold,
-      ),
-      boxHeight: 300.0,
-    ),
-  );
-  }
-  Widget Wavy(){
+  Widget Wavy(List<String> content){
     return DefaultTextStyle(
       style: const TextStyle(
-        fontSize: 20.0,
+        fontSize: 100.0,
       ),
       child: AnimatedTextKit(
-        animatedTexts: [
-          WavyAnimatedText('Hello World'),
-          WavyAnimatedText('Look at the waves'),
-        ],
+        animatedTexts: content.map((e) => WavyAnimatedText(e)).toList(),
         isRepeatingAnimation: true,
         onTap: () {
           print("Tap Event");
@@ -209,11 +199,11 @@ class _ViewState extends State<View>{
     );
   }
 
-  Widget Flicker(){
+  Widget Flicker(List<String> content){
     return SizedBox(
     child: DefaultTextStyle(
       style: const TextStyle(
-        fontSize: 35,
+        fontSize: 100,
         color: Colors.white,
         shadows: [
           Shadow(
@@ -225,11 +215,7 @@ class _ViewState extends State<View>{
       ),
       child: AnimatedTextKit(
         repeatForever: true,
-        animatedTexts: [
-          FlickerAnimatedText('Flicker Frenzy'),
-          FlickerAnimatedText('Night Vibes On'),
-          FlickerAnimatedText("C'est La Vie !"),
-        ],
+        animatedTexts: content.map((e) => FlickerAnimatedText(e)).toList(),
         onTap: () {
           print("Tap Event");
         },

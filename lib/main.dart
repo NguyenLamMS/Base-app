@@ -12,10 +12,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Text To Speech',
+      title: 'Animated Text',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        primaryColor: Colors.deepPurpleAccent
+        primaryColor: Colors.blue
       ),
       home: App(),
     );

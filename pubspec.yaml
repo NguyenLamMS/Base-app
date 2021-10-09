@@ -32,6 +32,7 @@ dependencies:
   animated_text_kit: ^4.2.1
   state_notifier: ^0.7.1
   flutter_colorpicker: ^0.6.0
+  auto_size_text: ^2.1.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

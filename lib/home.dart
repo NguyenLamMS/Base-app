@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:payment/payment.dart';
 import 'package:payment/view.dart';
-import 'package:state_notifier/state_notifier.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -11,6 +10,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           children: [
@@ -24,14 +24,14 @@ class Home extends StatelessWidget {
 
   Widget HomeAppBar(context) {
     return Container(
-      color: Colors.deepPurpleAccent,
+      color: Theme.of(context).primaryColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Padding(
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Text(
-                "Text To Speech",
+                "Animated Text",
                 style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -44,7 +44,7 @@ class Home extends StatelessWidget {
               },
               child: Text(
                 'Donate',
-                style: TextStyle(color: Colors.blue),
+                style: TextStyle(color: Colors.white),
               ))
         ],
       ),
@@ -56,56 +56,69 @@ class Home extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         borderSide: BorderSide(color: Colors.teal));
     var textFieldController = TextEditingController();
-    ValueNotifier<bool> isSpeech = ValueNotifier(false);
+    ValueNotifier<Color> backgroundColor = ValueNotifier(Colors.red);
+    int indexAnimation = 0;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          TextField(
+          decoration: InputDecoration(
+              enabledBorder: inputBorder,
+              focusedBorder: inputBorder,
+              hintText: "Enter content here"),
+          scrollPadding: EdgeInsets.all(20),
+          autofocus: false,
+          maxLines: 10,
+          controller: textFieldController,
+          ),
+          ValueListenableBuilder(
+            valueListenable: backgroundColor,
+            builder: (context, value, child){
+              return Container(
+                margin: EdgeInsets.symmetric(vertical: 16),
+                height: 100,
+                width: double.infinity,
+                child: CupertinoButton(child: Text("Backgound Color"), color: backgroundColor.value,onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Select colors'),
+                        content: SingleChildScrollView(
+                          child: BlockPicker(
+                            pickerColor: Colors.red,
+                            onColorChanged: (color){
+                              backgroundColor.value = color;
+                              Navigator.pop(context);
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },),
+              );
+            },
+          ),
           Expanded(
-            flex: 3,
-            child: TextField(
-            decoration: InputDecoration(
-                enabledBorder: inputBorder,
-                focusedBorder: inputBorder,
-                hintText: "Enter content here"),
-            scrollPadding: EdgeInsets.all(20),
-            autofocus: true,
-            maxLines: 10,
-            controller: textFieldController,
-          )),
-          CupertinoButton(child: Text("Color"), onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Select colors'),
-                  content: SingleChildScrollView(
-                    child: BlockPicker(
-                      pickerColor: Colors.red,
-                      onColorChanged: (color){},
-                    ),
-                  ),
-                );
-              },
-            );
-          },),
-          Expanded(
-            flex: 1,
             child: Container(
               child: Center(
                 child: CupertinoPicker(
                   children: [
-                    Text("Item 0"),
-                    Text("Item 1"),
-                    Text("Item 2"),
-                    Text("Item 3"),
-                    Text("Item 4"),
-                    Text("Item 5"),
-                    Text("Item 6"),
-                    Text("Item 7"),
+                    Center(child: Text("Rotate")),
+                    Center(child: Text("Fade")),
+                    Center(child: Text("Typer")),
+                    Center(child: Text("Typewriter")),
+                    Center(child: Text("Scale")),
+                    Center(child: Text("Colorize")),
+                    Center(child: Text("Wavy")),
+                    Center(child: Text("Flicker")),
                   ],
                   itemExtent: 50,
                   onSelectedItemChanged: (index){
+                    indexAnimation = index;
                   },
                 ),
               ),
@@ -114,20 +127,14 @@ class Home extends StatelessWidget {
           Container(
             margin: EdgeInsets.all(8),
             width: double.infinity,
-            child: ValueListenableBuilder(
-              valueListenable: isSpeech,
-              builder: (context, value, child) {
-                return CupertinoButton(
-                    child: Text(isSpeech.value ? "Stop" : "Speech"),
-                    onPressed: () async {
-                      isSpeech.value = !isSpeech.value;
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => View()));
-                    },
-                    color: isSpeech.value ? Colors.red : Colors.teal);
-              },
+            child: CupertinoButton(
+                child: Text("Start"),
+                onPressed: () async {
+                  Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => View(color: backgroundColor.value, contents: textFieldController.text, index: indexAnimation,)));
+                },
+                color: Colors.blue)
             ),
-          )
         ],
       ),
     );
