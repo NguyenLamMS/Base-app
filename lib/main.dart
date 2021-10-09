@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'Text To Speech',
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        primaryColor: Colors.teal
+        primaryColor: Colors.deepPurpleAccent
       ),
       home: App(),
     );
