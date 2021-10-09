@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:payment/payment.dart';
-
 import 'home.dart';
 
 class App extends StatelessWidget {

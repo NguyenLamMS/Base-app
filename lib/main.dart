@@ -12,9 +12,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Text To Speech',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        primaryColor: Colors.teal
       ),
       home: App(),
     );
