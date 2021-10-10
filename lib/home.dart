@@ -133,7 +133,7 @@ class Home extends StatelessWidget {
                   Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => View(color: backgroundColor.value, contents: textFieldController.text, index: indexAnimation,)));
                 },
-                color: Colors.blue)
+                color: Theme.of(context).primaryColor)
             ),
         ],
       ),

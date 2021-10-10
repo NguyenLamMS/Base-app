@@ -1,4 +1,4 @@
-package com.dream.payment
+package com.dream.animatedtext
 
 import io.flutter.embedding.android.FlutterActivity
 
