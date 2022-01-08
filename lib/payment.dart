@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
@@ -9,24 +8,15 @@ class Payment extends StatefulWidget {
   @override
   _PaymentState createState() => _PaymentState();
 }
-const List<String> _kProductIds = <String>[
-  "one_week",
-  "one_month",
-  "three_month",
-  "six_month",
-  "one_year",
-  "donate_1",
-  "donate_2",
-  "donate_3",
-  "donate_4",
-  "donate_5",
-];
+const List<String> _productIds = ["donte_1", "donate_2", "donate_3", "donate_4", "donate_5"];
+const List<String> _subcriptionIds = ["one_week", "one_month", "three_month"];
 
 class _PaymentState extends State<Payment> {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
   late StreamSubscription<List<PurchaseDetails>> _subscription;
   List<String> _notFoundIds = [];
   List<ProductDetails> _products = [];
+  List<ProductDetails> _subcription = [];
   List<PurchaseDetails> _purchases = [];
   bool _isAvailable = false;
   bool _loading = true;
@@ -111,11 +101,11 @@ class _PaymentState extends State<Payment> {
                             productDetails: productDetails,
                             applicationUserName: null,
                           );
-                          if(productDetails.id.contains("donate")){
-                            _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: true);
-                          }else{
-                            _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
-                          }
+                          // if(_typeProductIds[productDetails.id] == "item"){
+                          //   _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: true);
+                          // }else{
+                          //   _inAppPurchase.buyNonConsumable(purchaseParam: purchaseParam);
+                          // }
                         },
                       )),
           ),
@@ -151,22 +141,35 @@ class _PaymentState extends State<Payment> {
         _isAvailable = isAvailable;
         _products = [];
         _purchases = [];
+        _subcription = [];
         _notFoundIds = [];
         _loading = false;
       });
       return;
     }
-
-    ProductDetailsResponse productDetailResponse = await _inAppPurchase.queryProductDetails(_kProductIds.toSet());
+    //get all item
+    ProductDetailsResponse productDetailResponse = await _inAppPurchase.queryProductDetails(_productIds.toSet());
     if (productDetailResponse.error != null) {
       setState(() {
         _isAvailable = isAvailable;
         _products = productDetailResponse.productDetails;
         _purchases = [];
+        _subcription = [];
         _notFoundIds = productDetailResponse.notFoundIDs;
         _loading = false;
       });
-      return;
+    }
+    // get all subcription
+    ProductDetailsResponse subcriptionDetail = await _inAppPurchase.queryProductDetails(_subcriptionIds.toSet());
+    if(subcriptionDetail.error != null){
+      setState(() {
+        _isAvailable = isAvailable;
+        _subcription = productDetailResponse.productDetails;
+        _purchases = [];
+        _subcription = [];
+        _notFoundIds = productDetailResponse.notFoundIDs;
+        _loading = false;
+      });
     }
 
     if (productDetailResponse.productDetails.isEmpty) {
@@ -174,6 +177,7 @@ class _PaymentState extends State<Payment> {
         _isAvailable = isAvailable;
         _products = productDetailResponse.productDetails;
         _purchases = [];
+        _subcription = [];
         _notFoundIds = productDetailResponse.notFoundIDs;
         _loading = false;
       });
