@@ -3,6 +3,9 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:payment/diamond.dart';
 import 'package:payment/payment.dart';
 
 class RandomPassword extends StatefulWidget {
@@ -30,6 +33,7 @@ class _RandomPasswordState extends State<RandomPassword> {
   }
   @override
   Widget build(BuildContext context) {
+    Diamond diamond = Get.put(Diamond.instance);
     return Scaffold(
         body: Container(
           alignment: Alignment.center,
@@ -102,12 +106,31 @@ class _RandomPasswordState extends State<RandomPassword> {
                     ),
                     Column(
                       children: [
-                        CupertinoButton(child: Text("Get Password", style: TextStyle(color: Colors.black),), onPressed: (){
-                          regPassword();
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            FaIcon(FontAwesomeIcons.solidGem, size: 16, color: Colors.white,),
+                            SizedBox(width: 4,),
+                            Obx(() => Text(diamond.diamondTotal.value.toString(), style: Theme.of(context).textTheme.button!.copyWith(color: Colors.white),)),
+                            TextButton(onPressed: (){
+                                Get.to(() => Payment(diamond: diamond));
+                            }, child: Text("Buy Diamonds"))
+                          ],
+                        ),
+                        CupertinoButton(child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text("Get Password (", style: TextStyle(color: Colors.black),),
+                            FaIcon(FontAwesomeIcons.solidGem, color: Colors.black, size: 14,),
+                            SizedBox(width: 3,),
+                            Text("1)", style: Theme.of(context).textTheme.button)
+                          ],
+                        ), onPressed: (){
+                          if(diamond.diamondTotal.value > 0){
+                            regPassword();
+                          }
+                          diamond.subDiamond(1);
                         }, color: Colors.white,),
-                        TextButton(onPressed: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => Payment()));
-                        }, child: Text("Donate"))
                       ],
                     )
                   ],
