@@ -1,28 +1,29 @@
+import 'package:get/get.dart';
 import 'package:hive/hive.dart';
 
-class Diamond{
+class Diamond extends GetxController{
   static  Diamond _instance = Diamond._();
-  int diamondTotal = 0;
+  var diamondTotal = 0.obs;
   var box;
   Diamond._();
   static Diamond get instance => _instance;
 
   init() async {
     box = await Hive.openBox("Diamond");
-    diamondTotal = box.get("Total") ?? 0;
-    print(diamondTotal);
+    diamondTotal.value = box.get("Total") ?? 0;
   }
 
   sumDiamond(int value){
-    diamondTotal += value;
-    box.put('Total', diamondTotal);
+    diamondTotal.value += value;
+    box.put('Total', diamondTotal.value);
   }
   subDiamond(int value){
-    diamondTotal -= value;
-    box.put('Total', diamondTotal);
-  }
-  getDiamond() async {
-    return diamondTotal;
+    if(diamondTotal.value <= 0){
+      Get.snackbar("Notify", "You don't have enough diamonds", duration: Duration(milliseconds: 1000));
+      return;
+    }
+    diamondTotal.value -= value;
+    box.put('Total', diamondTotal.value);
   }
 
 }

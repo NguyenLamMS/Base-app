@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.life.quotesnew">
    <application
-        android:label="Life Quotes"
+        android:label="Random Quotes"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name="com.life.quotesnew.MainActivity"

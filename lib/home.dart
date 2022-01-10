@@ -4,6 +4,9 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
+import 'package:payment/diamond.dart';
 import 'package:payment/payment.dart';
 
 class Home extends StatefulWidget {
@@ -25,8 +28,9 @@ class _HomeState extends State<Home> {
   }
   @override
   Widget build(BuildContext context) {
+    final Diamond diamond = Get.put(Diamond.instance);
     return Scaffold(
-        body: Column(
+      body: Column(
       children: [
         Expanded(
           child: Stack(
@@ -61,24 +65,62 @@ class _HomeState extends State<Home> {
                     }
                   ),
                 ),
-              ))
+              )),
+              Positioned(
+                top: 0,
+                right: 0,
+                left: 0,
+                child: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Text("Random Quotes", style: Theme.of(context).textTheme.headline6?.copyWith(color: Colors.white),),
+                        InkWell(
+                          onTap: (){
+                            Get.to(() => Payment(diamond: diamond,));
+                          },
+                          child: Row(
+                            children: [
+                              FaIcon(FontAwesomeIcons.gem, size: 16, color: Colors.white,),
+                              SizedBox(width: 4,),
+                              Obx(() => Text(diamond.diamondTotal.toString(), style: Theme.of(context).textTheme.button?.copyWith(color: Colors.white)))
+                            ],
+                          ),
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              CupertinoButton(child: Text("Random"), onPressed: () {
-                setState(() {
-                  quote = listData[random.nextInt(listData.length)];
-                  image = listImage[random.nextInt(listImage.length)];
-                });
-              }, color: Colors.red),
-              CupertinoButton(child: Text("Donate"), onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => Payment()));
-              }, color: Colors.cyan),
+              Expanded(
+                child: CupertinoButton(child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Random ("),
+                    FaIcon(FontAwesomeIcons.gem, size: 16, color: Colors.white,),
+                    SizedBox(width: 4,),
+                    Text("1)", style: Theme.of(context).textTheme.button?.copyWith(color: Colors.white))
+                  ],
+                ),onPressed: () {
+                  if(diamond.diamondTotal.value > 0){
+                    setState(() {
+                      quote = listData[random.nextInt(listData.length)];
+                      image = listImage[random.nextInt(listImage.length)];
+                    });
+                  }
+                  diamond.subDiamond(1);
+                }, color: Colors.red),
+              ),
             ],
           ),
         )

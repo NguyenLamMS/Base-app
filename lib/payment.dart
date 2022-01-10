@@ -3,32 +3,45 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:payment/diamond.dart';
 
 class Payment extends StatefulWidget {
-  const Payment({Key? key}) : super(key: key);
+  final Diamond diamond;
+  const Payment({Key? key, required this.diamond}) : super(key: key);
 
   @override
   _PaymentState createState() => _PaymentState();
 }
 const Map<String, String> _typeProductIds = {
-  "donate_1" : "item",
-  "donate_2" : "item",
-  "one_week" : "sub",
-  "android.test.purchased" : "sub",
-  "android.test.item_unavailable" : "item",
-  "android.test.refunded" : "sub",
+  "randomquote_69_diamonds" : "item",
+  "randomquote_139_diamonds" : "item",
+  "randomquote_349_diamonds" : "item",
+  "randomquote_699_diamonds" : "item",
+  "randomquote_3499_diamonds" : "item",
+  "randomquote_6999_diamonds" : "item",
+  "randomquote_1_week" : "sub",
+  "randomquote_1_month" : "sub",
+  "randomquote_3_month" : "sub",
+  "randomquote_6_month" : "sub",
+  "randomquote_1_year" : "sub",
 };
 const Map<String, String> _diamond = {
-  "donate_1" : "69",
-  "donate_2" : "139",
-  "one_week" : "349",
-  "android.test.purchased" : "699",
-  "android.test.item_unavailable" : "3499",
-  "android.test.refunded" : "6999",
+  "randomquote_69_diamonds" : "69",
+  "randomquote_139_diamonds" : "139",
+  "randomquote_349_diamonds" : "349",
+  "randomquote_699_diamonds" : "699",
+  "randomquote_3499_diamonds" : "3499",
+  "randomquote_6999_diamonds" : "6999",
+  "randomquote_1_week" : "100000",
+  "randomquote_1_month" : "100000",
+  "randomquote_3_month" : "100000",
+  "randomquote_6_month" : "100000",
+  "randomquote_1_year" : "100000",
 };
 
 class _PaymentState extends State<Payment> {
   final InAppPurchase _inAppPurchase = InAppPurchase.instance;
+  int diamonSelect = 0;
   late StreamSubscription<List<PurchaseDetails>> _subscription;
   List<String> _notFoundIds = [];
   List<ProductDetails> _products = [];
@@ -83,7 +96,8 @@ class _PaymentState extends State<Payment> {
 
     productList.addAll(_products.map((e){
       if(_typeProductIds[e.id] == "item"){
-        return itemProduct("10", e.price, (){
+        return itemProduct(_diamond[e.id].toString(), e.price, (){
+          diamonSelect = int.parse(_diamond[e.id].toString());
           PurchaseParam purchaseParam = PurchaseParam(productDetails: e);
           _inAppPurchase.buyConsumable(purchaseParam: purchaseParam, autoConsume: true);
         });
@@ -198,12 +212,15 @@ class _PaymentState extends State<Payment> {
       } else {
         if (purchaseDetails.status == PurchaseStatus.error) {
           print("Error...");
+          this.widget.diamond.sumDiamond(diamonSelect);
         } else if (purchaseDetails.status == PurchaseStatus.purchased) {
           print("Success...");
         }
       }
       if (purchaseDetails.pendingCompletePurchase) {
         print("Complete...");
+        this.widget.diamond.sumDiamond(diamonSelect);
+        diamonSelect = 0;
         await _inAppPurchase.completePurchase(purchaseDetails);
       }
     });
