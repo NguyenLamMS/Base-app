@@ -147,7 +147,7 @@ class _PaymentState extends State<Payment> {
           Text("Note", style: Theme.of(context).textTheme.button,),
           Text("\n- Diamonds are used to activate the functionality of the app. If you want to use all the functions of the app buy diamonds to unlock them\n", style: Theme.of(context).textTheme.caption,),
           Text("- Subscription packages by week, month by month, and year by year for people who use the app a lot, will save money\n", style: Theme.of(context).textTheme.caption,),
-          Text("- Subscriptions will automatically renew, you can cancel them in the play store", style: Theme.of(context).textTheme.caption,),
+          Text("- Subscriptions will automatically refresh, you can cancel them in the play store", style: Theme.of(context).textTheme.caption,),
         ],
       ),
     );
