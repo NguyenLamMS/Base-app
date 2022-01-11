@@ -10,7 +10,7 @@ class Diamond extends GetxController{
 
   init() async {
     box = await Hive.openBox("Diamond");
-    diamondTotal.value = box.get("Total") ?? 0;
+    diamondTotal.value = box.get("Total") ?? 10;
   }
 
   sumDiamond(int value){
