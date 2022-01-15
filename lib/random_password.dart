@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:payment/diamond.dart';
 import 'package:payment/payment.dart';
+import 'package:username_generator/username_generator.dart';
 
 class RandomPassword extends StatefulWidget {
   const RandomPassword({Key? key}) : super(key: key);
@@ -16,19 +18,14 @@ class RandomPassword extends StatefulWidget {
 }
 
 class _RandomPasswordState extends State<RandomPassword> {
-  int length = 15;
-  final letterLowerCase = "abcdefghijklmnopqrstuvwxyz";
-  final letterUpperCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  final number = '0123456789';
-  final special = '@#%^*>\$@?/[]=+';
-  bool isNumber = true;
-  bool isSpecial = true;
-  List<String> listPassword = [];
+  List<String> listUser = [];
   late TextEditingController textEditingController;
+  late UsernameGenerator generator;
   @override
   void initState() {
     textEditingController = TextEditingController(text: "15");
-    regPassword();
+    generator = UsernameGenerator();
+    userGenerator();
     super.initState();
   }
   @override
@@ -42,16 +39,17 @@ class _RandomPasswordState extends State<RandomPassword> {
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
               colors: [
-                Colors.indigoAccent,
-                Colors.greenAccent
+                Color(0xffEB3349),
+                Color(0xffF45C43)
               ]
             )
           ),
           child: SafeArea(
             child: Column(
               children: [
+                Expanded(flex: 1,child: Container(height: 50, alignment: Alignment.center,child: Text('Username Generator', style: GoogleFonts.pacifico(textStyle: TextStyle(color: Colors.white, fontSize: 25)),))),
                 Expanded(flex: 3,child: ListView.builder(
-                    itemCount: listPassword.length,
+                    itemCount: listUser.length,
                     itemBuilder: (context, index){
                   return Container(
                     padding: EdgeInsets.all(8),
@@ -59,112 +57,74 @@ class _RandomPasswordState extends State<RandomPassword> {
                     color: Colors.white,
                     child: Row(
                       children: [
-                        Expanded(child: Text(listPassword[index], overflow: TextOverflow.clip,)),
+                        Expanded(child: Text(listUser[index], overflow: TextOverflow.clip,)),
                         IconButton(onPressed: (){
-                          Clipboard.setData(ClipboardData(text: listPassword[index]));
+                          Clipboard.setData(ClipboardData(text: listUser[index]));
                           ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Copy successfully"), duration: Duration(milliseconds: 200),));
-                        }, icon: Icon(CupertinoIcons.doc_on_clipboard))
+                        }, icon: Icon(FontAwesomeIcons.clipboard))
                       ],
                     ),
                   );
                 })),
                 Expanded(flex: 1,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Row(
-                          children: [
-                            Text("Length", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),),
-                            SizedBox(width: 5,),
-                            Container(width: 50,child: CupertinoTextField(keyboardType: TextInputType.number, controller: textEditingController,)),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text("Number", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),),
-                            CupertinoSwitch(value: isNumber, onChanged: (value){
-                              setState(() {
-                                isNumber = !isNumber;
-                              });
-                            }),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Text("Special", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),),
-                            CupertinoSwitch(value: isSpecial, onChanged: (value){
-                              setState(() {
-                                isSpecial = !isSpecial;
-                              });
-                            }),
-                          ],
-                        ),
-                      ],
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Row(
+                                children: [
+                                  Text("Length", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 15)),
+                                  SizedBox(width: 5,),
+                                  Container(width: 50,child: CupertinoTextField(keyboardType: TextInputType.number, controller: textEditingController,)),
+                                ],
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              FaIcon(FontAwesomeIcons.solidGem, size: 16, color: Colors.white,),
+                              SizedBox(width: 4,),
+                              Obx(() => Text(diamond.diamondTotal.value.toString(), style: Theme.of(context).textTheme.button!.copyWith(color: Colors.white),)),
+                              TextButton(onPressed: (){
+                                  Get.to(() => Payment(diamond: diamond));
+                              }, child: Text("| Buy Diamonds", style: TextStyle(color: Colors.white),))
+                            ],
+                          ),
+                          CupertinoButton(child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text("Generetor (", style: TextStyle(color: Colors.black),),
+                              FaIcon(FontAwesomeIcons.solidGem, color: Colors.black, size: 14,),
+                              SizedBox(width: 3,),
+                              Text("1)", style: Theme.of(context).textTheme.button)
+                            ],
+                          ), onPressed: (){
+                            if(diamond.diamondTotal.value > 0){
+                                userGenerator();
+                            }
+                            diamond.subDiamond(1);
+                          }, color: Colors.white,),
+                        ],
+                      ),
                     ),
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            FaIcon(FontAwesomeIcons.solidGem, size: 16, color: Colors.white,),
-                            SizedBox(width: 4,),
-                            Obx(() => Text(diamond.diamondTotal.value.toString(), style: Theme.of(context).textTheme.button!.copyWith(color: Colors.white),)),
-                            TextButton(onPressed: (){
-                                Get.to(() => Payment(diamond: diamond));
-                            }, child: Text("Buy Diamonds"))
-                          ],
-                        ),
-                        CupertinoButton(child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text("Get Password (", style: TextStyle(color: Colors.black),),
-                            FaIcon(FontAwesomeIcons.solidGem, color: Colors.black, size: 14,),
-                            SizedBox(width: 3,),
-                            Text("1)", style: Theme.of(context).textTheme.button)
-                          ],
-                        ), onPressed: (){
-                          if(diamond.diamondTotal.value > 0){
-                            regPassword();
-                          }
-                          diamond.subDiamond(1);
-                        }, color: Colors.white,),
-                      ],
-                    )
-                  ],
-                )),
+                  )),
               ],
             ),
           ),
         )
     );
   }
-  String generatePassword(){
-    String chars = "";
-    chars += '$letterLowerCase$letterUpperCase';
-    if (isNumber) chars += '$number';
-    if (isSpecial) chars += '$special';
-    return List.generate(length, (index) {
-      final indexRandom = Random.secure().nextInt(chars.length);
-      return chars [indexRandom];
-    }).join('');
-  }
-  regPassword(){
-    try{
-      length = int.parse(textEditingController.text);
-      if(length <= 0 || length > 50){
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Error : Invalid length"), duration: Duration(milliseconds: 200)));
-        return;
-      }
-    }catch(e){
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString()), duration: Duration(milliseconds: 200)));
-    }
 
-    listPassword.clear();
-    for(int i = 0; i< 10; i++){
-      listPassword.add(generatePassword());
+  userGenerator(){
+    listUser.clear();
+    for( var i = 0 ; i < int.parse(textEditingController.text.toString()); i++ ) {
+      listUser.add(generator.generateRandom());
     }
     setState(() {
 
