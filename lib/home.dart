@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'package:payment/dataController.dart';
 import 'package:payment/diamond.dart';
 import 'package:payment/payment.dart';
 
@@ -17,120 +17,190 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  late List<dynamic> listData;
-  String quote = "Welcome";
-  String image ="image1.jpg";
+  late Map<dynamic, dynamic> citys ;
   Random random = Random();
-  List<String> listImage = ["image1.jpg", "image2.jpg", "image3.jpg", "image4.jpg", "image5.jpg"];
+  late TextEditingController textEditingController;
   @override
   void initState() {
+    textEditingController = TextEditingController();
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
     final Diamond diamond = Get.put(Diamond.instance);
+    DataController dataController = Get.put(DataController(context: context));
     return Scaffold(
-      body: Column(
-      children: [
-        Expanded(
-          child: Stack(
-            children: [
-              Positioned.fill(
-                  child: Image.asset(
-                "assets/images/" + image,
-                fit: BoxFit.cover,
-              )),
-              Positioned.fill(
-                  child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                child: Container(
-                  color: Colors.grey.withOpacity(0.05),
-                  alignment: Alignment.center,
-                  child: FutureBuilder<List<dynamic>>(
-                    future: readData(),
-                    builder: (context, snapshot) {
-                      if(snapshot.hasData){
-                       listData = snapshot.data!;
-                       quote = listData[random.nextInt(listData.length)];
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                           quote,
-                            style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w800),
-                            textAlign: TextAlign.center,
-                          ),
-                        );
-                      }
-                      return Center(child: CircularProgressIndicator(color: Colors.deepOrangeAccent,));
-                    }
-                  ),
-                ),
-              )),
-              Positioned(
-                top: 0,
-                right: 0,
-                left: 0,
-                child: SafeArea(
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Text("Random Quotes", style: Theme.of(context).textTheme.headline6?.copyWith(color: Colors.white),),
-                        InkWell(
-                          onTap: (){
-                            Get.to(() => Payment(diamond: diamond,));
-                          },
-                          child: Row(
-                            children: [
-                              FaIcon(FontAwesomeIcons.gem, size: 16, color: Colors.white,),
-                              SizedBox(width: 4,),
-                              Obx(() => Text(diamond.diamondTotal.toString(), style: Theme.of(context).textTheme.button?.copyWith(color: Colors.white)))
-                            ],
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
+      backgroundColor: Color(0xff202230),
+      body: SafeArea(
+        child: Column(
+        children: [
+          MyAppBar(diamond: diamond),
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: CupertinoTextField(
+              autofocus: false,
+              placeholder: 'Search',
+              controller: textEditingController,
+              onChanged: (value){
+                dataController.searchData(value);
+              },
+            ),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Row(
+          Expanded(
+            child: Obx(() => dataController.listSearch.length != 0 ? ListView.builder(itemBuilder: (context, index){
+              return Card(
+                child: ListTile(
+                  title: Text('City: ' + dataController.listSearch[index]['city'].toString()),
+                  subtitle: Text('Zipcode: ' + dataController.listSearch[index]['zip_code'].toString()),
+                  trailing: TextButton(onPressed: () => showDialog(context: context, builder: (context){
+                    return AlertDialog(
+                      title: Text('Notify'),
+                      content: Text('More content with 1 diamond'),
+                      actions: [
+                         TextButton(
+                            onPressed: () => Navigator.pop(context, 'Cancel'),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context, 'OK');
+                              if(diamond.diamondTotal.value > 0){
+                                showModalBottom(context, dataController.listSearch[index]);
+                              }
+                              diamond.subDiamond(1);
+                            },
+                            child: const Text('OK'),
+                          ),
+                      ],
+                    );
+                  }), child: Text('More'),),
+                ),
+              );
+            }, itemCount: dataController.listSearch.length,) : Center(child: Text('Loading...', style: TextStyle(color: Colors.white),),))
+          ),
+        ],
+    ),
+      ));
+
+  }
+
+
+  showModalBottom(context, var item){
+
+    showModalBottomSheet(context: context, builder: (context){
+      return Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(8),
+            height: 50,
+            alignment: Alignment.centerLeft,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Colors.black, width: 0.1))
+            ),
+            child: Text('City: ' + item['city'].toString()),
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            height: 50,
+            alignment: Alignment.centerLeft,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Colors.black, width: 0.1))
+            ),
+            child: Text('Zip code: ' + item['zip_code'].toString()),
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            height: 50,
+            alignment: Alignment.centerLeft,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Colors.black, width: 0.1))
+            ),
+            child: Text('Latitude: ' + item['latitude'].toString()),
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            height: 50,
+            alignment: Alignment.centerLeft,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Colors.black, width: 0.1))
+            ),
+            child: Text('Longitude: ' + item['longitude'].toString()),
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            height: 50,
+            alignment: Alignment.centerLeft,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Colors.black, width: 0.1))
+            ),
+            child: Text('State: ' + item['state'].toString()),
+          ),
+          Container(
+            padding: EdgeInsets.all(8),
+            height: 50,
+            alignment: Alignment.centerLeft,
+            width: double.infinity,
+            decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: Colors.black, width: 0.1))
+            ),
+            child: Text('County: ' + item['county'].toString()),
+          ),
+        ],
+      );
+    });
+  }
+
+}
+
+class MyAppBar extends StatelessWidget {
+  const MyAppBar({
+    Key? key,
+    required this.diamond
+  }) : super(key: key);
+  final Diamond diamond;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 60,
+      padding: EdgeInsets.all(8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
             children: [
-              Expanded(
-                child: CupertinoButton(child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+              Row(
+                children: [
+                  Text("USA Zip Code", style: Theme.of(context).textTheme.headline6?.copyWith(color: Colors.white),),
+                  SizedBox(width: 4,),
+                  FaIcon(FontAwesomeIcons.flagUsa, color: Colors.white, size: 15,)
+                ],
+              ),
+              InkWell(
+                onTap: (){
+                  Get.to(() => Payment(diamond: diamond,));
+                },
+                child: Row(
                   children: [
-                    Text("Random ("),
                     FaIcon(FontAwesomeIcons.gem, size: 16, color: Colors.white,),
                     SizedBox(width: 4,),
-                    Text("1)", style: Theme.of(context).textTheme.button?.copyWith(color: Colors.white))
+                    Obx(() => Text(diamond.diamondTotal.toString(), style: Theme.of(context).textTheme.button?.copyWith(color: Colors.white)))
                   ],
-                ),onPressed: () {
-                  if(diamond.diamondTotal.value > 0){
-                    setState(() {
-                      quote = listData[random.nextInt(listData.length)];
-                      image = listImage[random.nextInt(listImage.length)];
-                    });
-                  }
-                  diamond.subDiamond(1);
-                }, color: Colors.red),
-              ),
+                ),
+              )
             ],
           ),
-        )
-      ],
-    ));
-  }
-  Future<List<dynamic>> readData() async {
-    String data = await DefaultAssetBundle.of(context).loadString("assets/data/data.json");
-    final jsonResult = json.decode(data);
-    List<dynamic> result = jsonResult["data"].toList();
-    return result;
+          SizedBox(height: 4,),
+          InkWell(child: Text("Buy Diamonds", style: TextStyle(color: Colors.white),), onTap: () => Get.to(() => Payment(diamond: diamond)),)
+        ],
+      ),
+    );
   }
 }
