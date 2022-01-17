@@ -1,11 +1,9 @@
-import 'dart:convert';
 import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
-import 'package:payment/dataController.dart';
 import 'package:payment/diamond.dart';
 import 'package:payment/payment.dart';
 
@@ -16,191 +14,110 @@ class Home extends StatefulWidget {
   _HomeState createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin{
   late Map<dynamic, dynamic> citys ;
   Random random = Random();
-  late TextEditingController textEditingController;
+  late AnimationController controller;
+  late Animation flip_animation;
+  static const FRONT = "assets/images/ngua.png";
+  static const BACK = "assets/images/sap.png";
+  var image = FRONT.obs;
+  var result = "Welcome".obs;
   @override
   void initState() {
-    textEditingController = TextEditingController();
     super.initState();
+    controller = AnimationController(vsync: this, duration: Duration(seconds: 5));
+    flip_animation = Tween(begin: 0.0, end: 15).animate(CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn));
+    controller.addListener(() {
+      if(flip_animation.value.round() % 2 == 0){
+        image.value = FRONT;
+      }else{
+        image.value = BACK;
+      }
+    });
+  }
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    controller.dispose();
   }
   @override
   Widget build(BuildContext context) {
     final Diamond diamond = Get.put(Diamond.instance);
-    DataController dataController = Get.put(DataController(context: context));
     return Scaffold(
-      backgroundColor: Color(0xff202230),
+      backgroundColor: Color(0xffe9e8eb),
       body: SafeArea(
-        child: Column(
+        child: Stack(
         children: [
-          MyAppBar(diamond: diamond),
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: CupertinoTextField(
-              autofocus: false,
-              placeholder: 'Search',
-              controller: textEditingController,
-              onChanged: (value){
-                dataController.searchData(value);
+          Positioned.fill(child: Image.asset("assets/images/plate.png")),
+          Center(
+            child: AnimatedBuilder(
+              animation: controller,
+              builder: (context, child){
+                return Transform(transform: Matrix4.identity()..rotateY(2 * pi * flip_animation.value), alignment: Alignment.center ,child: Obx(()=>Image.asset(image.value)));
               },
             ),
           ),
-          Expanded(
-            child: Obx(() => dataController.listSearch.length != 0 ? ListView.builder(itemBuilder: (context, index){
-              return Card(
-                child: ListTile(
-                  title: Text('City: ' + dataController.listSearch[index]['city'].toString()),
-                  subtitle: Text('Zipcode: ' + dataController.listSearch[index]['zip_code'].toString()),
-                  trailing: TextButton(onPressed: () => showDialog(context: context, builder: (context){
-                    return AlertDialog(
-                      title: Text('Notify'),
-                      content: Text('More content with 1 diamond'),
-                      actions: [
-                         TextButton(
-                            onPressed: () => Navigator.pop(context, 'Cancel'),
-                            child: const Text('Cancel'),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context, 'OK');
-                              if(diamond.diamondTotal.value > 0){
-                                showModalBottom(context, dataController.listSearch[index]);
-                              }
-                              diamond.subDiamond(1);
-                            },
-                            child: const Text('OK'),
-                          ),
-                      ],
-                    );
-                  }), child: Text('More'),),
-                ),
-              );
-            }, itemCount: dataController.listSearch.length,) : Center(child: Text('Loading...', style: TextStyle(color: Colors.white),),))
-          ),
-        ],
-    ),
-      ));
-
-  }
-
-
-  showModalBottom(context, var item){
-
-    showModalBottomSheet(context: context, builder: (context){
-      return Column(
-        children: [
-          Container(
-            padding: EdgeInsets.all(8),
-            height: 50,
-            alignment: Alignment.centerLeft,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Colors.black, width: 0.1))
-            ),
-            child: Text('City: ' + item['city'].toString()),
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
-            height: 50,
-            alignment: Alignment.centerLeft,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Colors.black, width: 0.1))
-            ),
-            child: Text('Zip code: ' + item['zip_code'].toString()),
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
-            height: 50,
-            alignment: Alignment.centerLeft,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Colors.black, width: 0.1))
-            ),
-            child: Text('Latitude: ' + item['latitude'].toString()),
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
-            height: 50,
-            alignment: Alignment.centerLeft,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Colors.black, width: 0.1))
-            ),
-            child: Text('Longitude: ' + item['longitude'].toString()),
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
-            height: 50,
-            alignment: Alignment.centerLeft,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Colors.black, width: 0.1))
-            ),
-            child: Text('State: ' + item['state'].toString()),
-          ),
-          Container(
-            padding: EdgeInsets.all(8),
-            height: 50,
-            alignment: Alignment.centerLeft,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                border: Border(bottom: BorderSide(color: Colors.black, width: 0.1))
-            ),
-            child: Text('County: ' + item['county'].toString()),
-          ),
-        ],
-      );
-    });
-  }
-
-}
-
-class MyAppBar extends StatelessWidget {
-  const MyAppBar({
-    Key? key,
-    required this.diamond
-  }) : super(key: key);
-  final Diamond diamond;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 60,
-      padding: EdgeInsets.all(8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Row(
-                children: [
-                  Text("USA Zip Code", style: Theme.of(context).textTheme.headline6?.copyWith(color: Colors.white),),
-                  SizedBox(width: 4,),
-                  FaIcon(FontAwesomeIcons.flagUsa, color: Colors.white, size: 15,)
-                ],
-              ),
-              InkWell(
-                onTap: (){
-                  Get.to(() => Payment(diamond: diamond,));
+          Positioned(
+            bottom: 10,
+            left: 10,
+            right: 10,
+            child: Column(
+              children: [
+                TextButton(onPressed: (){
+                  Get.to(() => Payment(diamond: diamond));
+                }, child: Text("Buy Diamonds")),
+                CupertinoButton(onPressed: (){
+                  if(diamond.diamondTotal.value > 0){
+                    controller.reset();
+                    result.value = "Um ba la...";
+                    if(Random().nextInt(2) == 1){
+                      flip_animation = Tween(begin: 0.0, end: 15).animate(CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn));
+                      controller.forward().then((value){
+                        result.value = 'Back';
+                      });
+                    }else{
+                      flip_animation = Tween(begin: 0.0, end: 14).animate(CurvedAnimation(parent: controller, curve: Curves.fastOutSlowIn));
+                      controller.forward().then((value){
+                        result.value = 'Front';
+                      });
+                    }
+                  }
+                 diamond.subDiamond(1);
                 },
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    FaIcon(FontAwesomeIcons.gem, size: 16, color: Colors.white,),
+                    Text('Toss ('),
+                    FaIcon(FontAwesomeIcons.gem, size: 15,),
                     SizedBox(width: 4,),
-                    Obx(() => Text(diamond.diamondTotal.toString(), style: Theme.of(context).textTheme.button?.copyWith(color: Colors.white)))
+                    Text("1)")
                   ],
-                ),
+                ), color: Colors.blue,),
+              ],
+            )),
+          Positioned(
+            top: 10,
+            left: 10,
+            right: 10,
+            child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text("Toss a coin", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.w600),),
+              Row(
+                children: [
+                  FaIcon(FontAwesomeIcons.gem, size: 15,),
+                  SizedBox(width: 4,),
+                  Obx(() => Text(diamond.diamondTotal.value.toString(), style: Theme.of(context).textTheme.button,))
+                ],
               )
             ],
-          ),
-          SizedBox(height: 4,),
-          InkWell(child: Text("Buy Diamonds", style: TextStyle(color: Colors.white),), onTap: () => Get.to(() => Payment(diamond: diamond)),)
+          )),
+          Positioned(child: Container(alignment: Alignment.center ,child: Obx(() => Text(result.value, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 50),))), top: 100, left: 0, right: 0,)
         ],
-      ),
-    );
+    ),
+  ));
   }
 }
+
