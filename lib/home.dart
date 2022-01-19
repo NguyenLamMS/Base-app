@@ -17,6 +17,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  TextEditingController textEditingController = TextEditingController();
   @override
   void initState() {
     super.initState();
@@ -33,7 +34,7 @@ class _HomeState extends State<Home> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Fortune Wheel', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
+                  Text('Uppercase lowercase', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
                   InkWell(
                     onTap: (){
                       Get.to(() => Payment(diamond: diamond));
@@ -56,6 +57,86 @@ class _HomeState extends State<Home> {
                 ],
               ),
             ),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.all(8),
+                child: CupertinoTextField(controller: textEditingController, maxLines: null, keyboardType:  TextInputType.multiline,),
+              ),
+            ),
+            Row(
+              children: [
+                  Expanded(
+                    child: InkWell(
+                      onTap: (){
+                        textEditingController.text = textEditingController.text.toUpperCase();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(8),
+                        height: 50,
+                        color: Colors.red,
+                        alignment: Alignment.center,
+                        child: Text('Uppercase', style: Theme.of(context).textTheme.button!.copyWith(color: Colors.white),),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: InkWell(
+                      onTap: (){
+                        textEditingController.text = textEditingController.text.toLowerCase();
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(8),
+                        height: 50,
+                        color: Colors.blue,
+                        alignment: Alignment.center,
+                        child: Text('Lowercase', style: Theme.of(context).textTheme.button!.copyWith(color: Colors.white)),
+                      ),
+                    ),
+                  )
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: (){
+                      if(diamond.diamondTotal.value > 0){
+                        textEditingController.text = textEditingController.text.capitalize!;
+                      }
+                      diamond.subDiamond(1);
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(8),
+                      height: 50,
+                      color: Colors.amber,
+                      alignment: Alignment.center,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Capitalize (', style: Theme.of(context).textTheme.button!.copyWith(color: Colors.white),),
+                          FaIcon(FontAwesomeIcons.gem, color: Colors.white, size: 15,),
+                          Text('1)' , style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500),)
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: InkWell(
+                    onTap: (){
+                      textEditingController.text = textEditingController.text.capitalizeFirst!;
+                    },
+                    child: Container(
+                      margin: EdgeInsets.all(8),
+                      height: 50,
+                      color: Colors.deepOrange,
+                      alignment: Alignment.center,
+                      child: Text('Capitalize first', style: Theme.of(context).textTheme.button!.copyWith(color: Colors.white)),
+                    ),
+                  ),
+                )
+              ],
+            )
           ],
         ),
       ),
