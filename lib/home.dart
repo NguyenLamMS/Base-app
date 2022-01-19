@@ -28,16 +28,34 @@ class _HomeState extends State<Home> {
       body: SafeArea(
         child: Column(
           children: [
-            Row(
-              children: [
-                Text('Convert uppercase lowercase'),
-                Row(
-                  children: [
-
-                  ],
-                )
-              ],
-            )
+            Container(
+              padding: EdgeInsets.all(8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Fortune Wheel', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),),
+                  InkWell(
+                    onTap: (){
+                      Get.to(() => Payment(diamond: diamond));
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            FaIcon(FontAwesomeIcons.gem, size: 15,),
+                            SizedBox(width: 4,),
+                            Obx(() => Text(diamond.diamondTotal.value.toString()))
+                          ],
+                        ),
+                        Text('Buy Diamonds')
+                      ],
+                    ),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
